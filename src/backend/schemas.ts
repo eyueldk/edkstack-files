@@ -2,10 +2,9 @@ import { nanoid } from "nanoid";
 import { index, integer, pgTable, text, timestamp, pgEnum } from "drizzle-orm/pg-core";
 
 
-export type AllSchemas = ReturnType<typeof createSchemas>;
-export type FileSchema = AllSchemas["files"];
-export type FileSelect = FileSchema["$inferSelect"];
-export type FileInsert = FileSchema["$inferInsert"];
+export type Schemas = ReturnType<typeof createSchemas>;
+export type FileSchema = Schemas["files"];
+export type FileRecord = FileSchema["$inferSelect"];
 
 export function createSchemas() {
 

@@ -5,7 +5,7 @@ import { createServices } from "./services";
 import type { S3Options } from "bun";
 
 export interface FilesBackendOptions<TPurposes extends string> {
-  db: PgDatabase<any>;
+  db: PgDatabase<any, any, any>;
   s3Options: S3Options;
   policies: Record<TPurposes, PurposePolicy>;
   publicBaseUrl: string;

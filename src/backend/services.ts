@@ -2,7 +2,7 @@ import { S3Client, type S3Options } from "bun";
 import { nanoid } from "nanoid";
 import { extname } from "path";
 import { eq, sql, lt, and } from "drizzle-orm";
-import type { AllSchemas, FileSelect } from "./schemas";
+import type { Schemas, FileRecord } from "./schemas";
 import type { PgDatabase } from "drizzle-orm/pg-core";
 
 export type Services = ReturnType<typeof createServices>;
@@ -11,8 +11,8 @@ type ById = { id: string };
 
 export function createServices(
   options: {
-    db: PgDatabase<any>;
-    schemas: AllSchemas;
+    db: PgDatabase<any, any, any>;
+    schemas: Schemas;
     s3Options: S3Options;
     keyPrefix?: string;
     presignExpiresIn?: number;
@@ -31,7 +31,7 @@ export function createServices(
 
   return {
 
-    async getFile(params: ById): Promise<FileSelect> {
+    async getFile(params: ById): Promise<FileRecord> {
       const [found] = await db
         .select()
         .from(schemas.files)
@@ -65,7 +65,7 @@ export function createServices(
       file: File;
       purpose: string;
       visibility: "private" | "public";
-    }): Promise<FileSelect> {
+    }): Promise<FileRecord> {
       const id = nanoid();
       const ext = extname(params.file.name);
       const key = [keyPrefix, params.visibility, params.purpose, `${id}${ext}`].join("/");
@@ -106,7 +106,7 @@ export function createServices(
 
     async acquireFile(params: ById & { 
       purpose?: string 
-    }): Promise<FileSelect> {
+    }): Promise<FileRecord> {
       const [updated] = await db
         .update(schemas.files)
         .set({ refCount: sql`${schemas.files.refCount} + 1` })

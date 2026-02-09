@@ -6,8 +6,9 @@ export default defineConfig({
     "src/backend/index.ts",
     "src/client/index.ts"
   ],
+  target: "bun",
   clean: true,
-  sourcemap: true,
   dts: true,
   exports: true,
+  sourcemap: true,
 });
