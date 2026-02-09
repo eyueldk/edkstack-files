@@ -1,10 +1,8 @@
 {
   "name": "@edkstack/files",
-  "version": "0.1.0",
   "description": "File management utilities for EDK Stack",
+  "version": "0.1.0",
   "type": "module",
-  "main": "./dist/backend/index.js",
-  "types": "./dist/backend/index.d.ts",
   "files": [
     "dist",
     "README.md"
