@@ -1,4 +1,4 @@
-import type { S3Client } from "bun";
+import { S3Client, type S3Options } from "bun";
 import { nanoid } from "nanoid";
 import { extname } from "path";
 import { eq, sql, lt, and } from "drizzle-orm";
@@ -13,8 +13,7 @@ export function createServices(
   options: {
     db: PgDatabase<any>;
     schemas: AllSchemas;
-    s3Client: S3Client;
-    publicBaseUrl: string;
+    s3Options: S3Options;
     keyPrefix?: string;
     presignExpiresIn?: number;
   }
@@ -22,15 +21,15 @@ export function createServices(
   const { 
     db, 
     schemas, 
-    s3Client, 
-    publicBaseUrl, 
+    s3Options,
     keyPrefix = "files",
     presignExpiresIn = 3600
   } = options;
   
-  return {
+  const { endpoint } = s3Options;
+  const s3Client = new S3Client(s3Options);
 
-    s3Client,
+  return {
 
     async getFile(params: ById): Promise<FileSelect> {
       const [found] = await db
@@ -57,7 +56,7 @@ export function createServices(
         throw new Error("File not found");
       }
       if (found.visibility === "public") {
-        return `${publicBaseUrl}/${found.key}`;
+        return `${endpoint}/${found.key}`;
       }
       return s3Client.presign(found.key, { expiresIn: presignExpiresIn });
     },
