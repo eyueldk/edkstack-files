@@ -1,13 +1,21 @@
 {
   "name": "@edkstack/files",
   "description": "File management utilities for EDK Stack",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "files": [
     "dist",
     "README.md"
   ],
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    },
     "./backend": {
       "import": {
         "types": "./dist/backend/index.d.ts",
@@ -43,6 +51,9 @@
     "url": ""
   },
   "homepage": "",
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "@types/bun": "latest",
     "@types/react": "^19.2.13",
