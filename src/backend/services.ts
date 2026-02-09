@@ -1,18 +1,17 @@
-import type { S3Client, S3File } from "bun";
+import type { S3Client } from "bun";
 import { nanoid } from "nanoid";
 import { extname } from "path";
 import { eq, sql, lt, and } from "drizzle-orm";
-import type { BunSQLDatabase } from "drizzle-orm/bun-sql";
 import type { AllSchemas, FileSelect } from "./schemas";
+import type { PgDatabase } from "drizzle-orm/pg-core";
 
 export type Services = ReturnType<typeof createServices>;
 
 type ById = { id: string };
-type ByKey = { key: string };
 
 export function createServices(
   options: {
-    db: BunSQLDatabase;
+    db: PgDatabase<any>;
     schemas: AllSchemas;
     s3Client: S3Client;
     publicBaseUrl: string;
