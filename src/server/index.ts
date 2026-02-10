@@ -1,11 +1,6 @@
-export { 
-  createFilesServer, 
-  type FilesServerOptions
-} from "./server";
+export * as schema from "./schema";
+export * from "./server";
 export type { 
   PurposePolicy, 
   Visibility 
-} from "./routes";
-export type {
-  FileRecord,
-} from "./schemas";
+} from "./router";

@@ -1,8 +1,6 @@
 import { nanoid } from "nanoid";
 import { index, integer, pgTable, text, timestamp, pgEnum } from "drizzle-orm/pg-core";
 
-export type FileRecord = typeof files["$inferSelect"];
-
 export const files = pgTable("files", {
   id: text("id").primaryKey().$defaultFn(() => `file_${nanoid()}`),
   purpose: text("purpose").notNull(),

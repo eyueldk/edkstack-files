@@ -6,8 +6,8 @@ export function createFilesClient<
 >(
   domain: string,
   config?: Treaty.Config
-): Treaty.Create<TServer["routes"]> {
-  return treaty<TServer["routes"]>(domain, config);
+): Treaty.Create<TServer["router"]> {
+  return treaty<TServer["router"]>(domain, config);
 }
 
 export type FilesClient = ReturnType<typeof createFilesClient>;

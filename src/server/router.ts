@@ -1,5 +1,5 @@
 import { Elysia, t } from "elysia";
-import type { Services } from "./services";
+import type { Service } from "./service";
 
 export type Visibility = "private" | "public";
 
@@ -9,15 +9,15 @@ export interface PurposePolicy {
   visibility?: Visibility;
 }
 
-export function createRoutes<const TPurpose extends string>(
+export function createRouter<const TPurpose extends string>(
   options: {
-    services: Services;
+    service: Service;
     policies: Record<TPurpose, PurposePolicy>
   }
 ) {
   
   const { 
-    services, 
+    service, 
     policies,
   } = options;
 
@@ -41,12 +41,14 @@ export function createRoutes<const TPurpose extends string>(
         message: "File type not allowed",
       });
     }
-    const uploaded = await services.uploadFile({ 
+    const uploaded = await service.uploadFile({ 
       file, 
       purpose, 
       visibility: policy.visibility ?? "private" 
     });
+    const url = await service.getUrl({ id: uploaded.id });
     return status(200, {
+      url: url ?? "",
       id: uploaded.id,
       name: uploaded.name,
       key: uploaded.key,
@@ -83,6 +85,7 @@ const ErrorResponse = t.Object({
 });
 
 const FileResponse = t.Object({
+  url: t.String(),
   id: t.String(),
   name: t.Nullable(t.String()),
   key: t.String(),
