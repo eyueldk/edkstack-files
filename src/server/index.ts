@@ -1,7 +1,7 @@
 export { 
-  createFilesBackend, 
-  type FilesBackendOptions
-} from "./backend";
+  createFilesServer, 
+  type FilesServerOptions
+} from "./server";
 export type { 
   PurposePolicy, 
   Visibility 

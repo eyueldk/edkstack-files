@@ -2,8 +2,9 @@ import { S3Client, type S3Options } from "bun";
 import { nanoid } from "nanoid";
 import { extname } from "path";
 import { eq, sql, lt, and } from "drizzle-orm";
-import type { Schemas, FileRecord } from "./schemas";
+import type { FileRecord } from "./schemas";
 import type { PgDatabase } from "drizzle-orm/pg-core";
+import { files } from "./schemas";
 
 export type Services = ReturnType<typeof createServices>;
 
@@ -12,7 +13,6 @@ type ById = { id: string };
 export function createServices(
   options: {
     db: PgDatabase<any, any, any>;
-    schemas: Schemas;
     s3Options: S3Options;
     keyPrefix?: string;
     presignExpiresIn?: number;
@@ -20,7 +20,6 @@ export function createServices(
 ) {
   const { 
     db, 
-    schemas, 
     s3Options,
     keyPrefix = "files",
     presignExpiresIn = 3600
@@ -34,8 +33,8 @@ export function createServices(
     async getFile(params: ById): Promise<FileRecord> {
       const [found] = await db
         .select()
-        .from(schemas.files)
-        .where(eq(schemas.files.id, params.id))
+        .from(files)
+        .where(eq(files.id, params.id))
         .limit(1);
       if (!found) {
         throw new Error("File not found");
@@ -46,11 +45,11 @@ export function createServices(
     async getUrl(params: ById): Promise<string> {
       const [found] = await db
         .select({ 
-          key: schemas.files.key,
-          visibility: schemas.files.visibility,
+          key: files.key,
+          visibility: files.visibility,
         })
-        .from(schemas.files)
-        .where(eq(schemas.files.id, params.id))
+        .from(files)
+        .where(eq(files.id, params.id))
         .limit(1);
       if (!found) {
         throw new Error("File not found");
@@ -75,7 +74,7 @@ export function createServices(
         acl: params.visibility === "public" ? "public-read" : "private",
       });
       try {
-        const [created] = await db.insert(schemas.files)
+        const [created] = await db.insert(files)
           .values({
             purpose: params.purpose,
             key,
@@ -97,8 +96,8 @@ export function createServices(
 
     async deleteFile(params: { id: string }): Promise<void> {
       const [deleted] = await db
-        .delete(schemas.files)
-        .where(eq(schemas.files.id, params.id))
+        .delete(files)
+        .where(eq(files.id, params.id))
         .returning();
       if (!deleted) return;
       await s3Client.delete(deleted.key);
@@ -108,12 +107,12 @@ export function createServices(
       purpose?: string 
     }): Promise<FileRecord> {
       const [updated] = await db
-        .update(schemas.files)
-        .set({ refCount: sql`${schemas.files.refCount} + 1` })
+        .update(files)
+        .set({ refCount: sql`${files.refCount} + 1` })
         .where(
           and(
-            eq(schemas.files.id, params.id),
-            params.purpose ? eq(schemas.files.purpose, params.purpose) : undefined,
+            eq(files.id, params.id),
+            params.purpose ? eq(files.purpose, params.purpose) : undefined,
           )
         )
         .returning();
@@ -125,9 +124,9 @@ export function createServices(
 
     async releaseFile(params: ById): Promise<void> {
       const [updated] = await db
-        .update(schemas.files)
-        .set({ refCount: sql`${schemas.files.refCount} - 1` })
-        .where(eq(schemas.files.id, params.id))
+        .update(files)
+        .set({ refCount: sql`${files.refCount} - 1` })
+        .where(eq(files.id, params.id))
         .returning();
       if (!updated) {
         throw new Error("File not found");

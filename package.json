@@ -1,37 +1,21 @@
 {
   "name": "@edkstack/files",
   "description": "File management utilities for EDK Stack",
-  "version": "0.1.6",
+  "version": "0.1.11",
   "type": "module",
   "files": [
     "dist",
     "README.md"
   ],
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/index.d.mts",
   "exports": {
-    ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      }
-    },
-    "./backend": {
-      "import": {
-        "types": "./dist/backend/index.d.ts",
-        "default": "./dist/backend/index.js"
-      }
-    },
-    "./client": {
-      "import": {
-        "types": "./dist/client/index.d.ts",
-        "default": "./dist/client/index.js"
-      }
-    },
+    ".": "./dist/index.mjs",
+    "./client": "./dist/client/index.mjs",
+    "./server": "./dist/server/index.mjs",
     "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "bunup",
+    "build": "tsdown",
     "prepublishOnly": "bun run build"
   },
   "keywords": [
@@ -43,21 +27,13 @@
   ],
   "author": "",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": ""
-  },
-  "bugs": {
-    "url": ""
-  },
-  "homepage": "",
   "publishConfig": {
     "access": "public"
   },
   "devDependencies": {
     "@types/bun": "latest",
     "@types/react": "^19.2.13",
-    "bunup": "^0.16.25"
+    "tsdown": "^0.20.3"
   },
   "peerDependencies": {
     "@elysiajs/eden": "^1.4.6",

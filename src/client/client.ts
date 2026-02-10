@@ -1,13 +1,13 @@
 import { treaty, type Treaty } from "@elysiajs/eden";
-import type { createFilesBackend } from "../backend";
+import type { createFilesServer } from "../server";
 
 export function createFilesClient<
-  TBackend extends ReturnType<typeof createFilesBackend<any>>
+  TServer extends ReturnType<typeof createFilesServer<any>>
 >(
   domain: string,
   config?: Treaty.Config
-) {
-  return treaty<TBackend["routes"]>(domain, config);
+): Treaty.Create<TServer["routes"]> {
+  return treaty<TServer["routes"]>(domain, config);
 }
 
 export type FilesClient = ReturnType<typeof createFilesClient>;

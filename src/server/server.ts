@@ -1,24 +1,23 @@
 import type { PgDatabase } from "drizzle-orm/pg-core";
 import { createRoutes, type PurposePolicy } from "./routes";
-import { createSchemas } from "./schemas";
-import { createServices } from "./services";
+import { createServices, type Services } from "./services";
 import type { S3Options } from "bun";
 
-export interface FilesBackendOptions<TPurposes extends string> {
+export interface FilesServerOptions<TPurposes extends string> {
   db: PgDatabase<any, any, any>;
   s3Options: S3Options;
   policies: Record<TPurposes, PurposePolicy>;
-  publicBaseUrl: string;
   presignExpiresIn?: number;
 }
 
-export function createFilesBackend<const TPurpose extends string>(
-  options: FilesBackendOptions<TPurpose>
-) {
-  const schemas = createSchemas();
+export function createFilesServer<const TPurpose extends string>(
+  options: FilesServerOptions<TPurpose>
+): {
+  readonly routes: ReturnType<typeof createRoutes<TPurpose>>;
+  readonly services: Services;
+} {
   const services = createServices({
     db: options.db,
-    schemas,
     s3Options: options.s3Options,
     presignExpiresIn: options.presignExpiresIn,
   });
@@ -27,8 +26,7 @@ export function createFilesBackend<const TPurpose extends string>(
     policies: options.policies,
   });
   return {
-    schemas,
     routes,
     services,
-  } as const;
+  };
 }

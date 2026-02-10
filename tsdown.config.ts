@@ -1,14 +1,15 @@
-import { defineConfig } from "bunup";
+import { defineConfig } from "tsdown";
 
 export default defineConfig({
   entry: [
     "src/index.ts",
-    "src/backend/index.ts",
-    "src/client/index.ts"
+    "src/server/index.ts",
+    "src/client/index.ts",
   ],
-  target: "bun",
+  platform: "node",
   clean: true,
   dts: true,
   exports: true,
   sourcemap: true,
+  external: ["bun"]
 });
